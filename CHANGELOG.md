@@ -7,6 +7,9 @@
 
 ### Added
 
+- 검증된 bundle을 Artifact Registry digest로 고정하는 선택형 모델 릴리스 단계
+- 후보 리비전 0% smoke, Blue/Green 전환과 이전 리비전 자동 롤백을 수행하는 Cloud Run workflow
+- GitHub OIDC Workload Identity Federation·Secret Manager 기반 서울 스테이징 배포 문서
 - 공개 검증 CAMEO 15쌍의 확인 상태 45건과 안전 hard case 5건을 정답 없이 생성하는
   E2E 공모전 검수 후보팩
 - 서로 다른 라벨러·검수자의 빈 CSV를 내보내고 완전 일치·안전 불변조건을 통과한 경우에만
