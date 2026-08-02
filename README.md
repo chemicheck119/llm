@@ -8,7 +8,7 @@
 [![Python](https://img.shields.io/badge/Python-3.11-3776AB?logo=python&logoColor=white)](pyproject.toml)
 [![FastAPI](https://img.shields.io/badge/API-FastAPI-009688?logo=fastapi&logoColor=white)](docs/API.md)
 [![Docker](https://img.shields.io/badge/Deploy-Docker%20%7C%20Cloud%20Run-4285F4?logo=googlecloud&logoColor=white)](docs/DEPLOYMENT.md)
-[![Tests](https://img.shields.io/badge/Tests-426%20passed-2E7D32)](docs/EVALUATION.md)
+[![Tests](https://img.shields.io/badge/Tests-428%20passed-2E7D32)](docs/EVALUATION.md)
 
 - **참가 부문:** [제6회 소방안전 빅데이터 활용 및 아이디어 경진대회](https://www.bigdata-119.kr/bbs/view?bbsctt_id=571) · 서비스 개발 부문
 - **AI 스택:** Incident Agent · Resolver Fine-tuning · Hybrid Retrieval · Grounded RAG · CAMEO Rule Engine · FastAPI
@@ -80,7 +80,8 @@ flowchart LR
 
 정확한 CAS·표준명·동의어 검색과 문자 TF-IDF를 결합해 Top-K 후보를 생성합니다. 소방안전
 빅데이터의 실제 사고 표현으로 Resolver를 적응학습했으며, 이름을 모를 때는 상태·색상·냄새·
-용도 프로필로 물질을 탐색합니다.
+용도 프로필로 물질을 탐색합니다. 기본 카탈로그 밖 소방 기록 CAS는 과거의 정확 표현에서만
+확인 필요 후보로 반환하고, 비슷한 철자만으로 추정하지 않습니다.
 
 ### 4. Hybrid Retrieval·Grounded RAG
 
@@ -99,25 +100,29 @@ flowchart LR
 | 지표 | 결과 |
 |---|---:|
 | Resolver 잠금 평가셋 | 소방 사고 표현 419건 |
-| Resolver Top-1 Accuracy | **0.3246 → 0.6706 (+34.60%p)** |
+| Resolver Top-1 Accuracy | **0.3246 → 0.8974 (+57.28%p)** |
+| Resolver Top-3 Recall | **0.3461 → 0.9021 (+55.60%p)** |
+| 평가 CAS의 artifact 포함률 | **0.7422 → 0.9714** |
 | 전국 화학사고 외부 평가 | 2021~2025년 442건 |
 | 사고유형 Recall | **0.8376** |
 | 물질명 언급 Recall | **0.8150** |
-| 물질 카탈로그 | 약 **4,300개** |
+| 물질 후보 범위 | 기본 **4,300개** + 소방기록 exact-only **35 CAS** |
 | 관찰 기반 물질 프로필 | **749 CAS** |
 | 전국 시설 과거 이력 | **17개 시·도 · 28,647개 시설** |
 | 공식 근거 검색 인덱스 | 약 **5,858개 문서·절** |
 | CAMEO 충돌 규칙 코어 | **CAS 6종 · 15조합** |
-| 자동화 테스트 | **426개** |
+| 자동화 테스트 | **428개** |
 
 평가 데이터, 분할 정책, 실패 사례와 재현 명령은 [모델 평가 문서](docs/EVALUATION.md)에서
-관리합니다.
+관리합니다. Resolver 수치는 과거 공개 사고 표현 재식별 평가이며 전국 현장 정확도가 아닙니다.
+처음 보는 표현 60건의 Top-1은 0.2833으로 개선되지 않았고, 잘못된 단일 exact 확정은 0건을
+유지했습니다.
 
 ## 소방안전 빅데이터 활용
 
 | 데이터 | AI 파이프라인 적용 | 구축 결과 |
 |---|---|---:|
-| [울산 화학사고별 유해물질 판단 정보](https://www.bigdata-119.kr/goods/goodsInfo?goods_mng_sn=5) | 사고 기록의 물질명–CAS 표현을 Resolver 적응학습에 사용 | 유효 표현 1,530건 · 학습 표현 241개 추가 |
+| [울산 화학사고별 유해물질 판단 정보](https://www.bigdata-119.kr/goods/goodsInfo?goods_mng_sn=5) | 사고 기록의 물질명–CAS 표현을 Resolver 적응학습에 사용 | 유효 표현 1,530건 · 학습 표현 354개 추가(소방기록 exact-only 113개 포함) |
 | [울산광역시소방본부 화학물 정보](https://www.bigdata-119.kr/goods/goodsInfo?goods_mng_sn=21) | 상태·색상·냄새·용도 기반 Discovery 프로필 생성 | 카탈로그 연결 749 CAS |
 
 ### 결합한 공식 데이터
